@@ -12,8 +12,12 @@ RUN apt-get update && apt-get install -y \
         flex \
 	openssl \
 	libssl-dev \
+	libc6 \
+	libc6-dev \
 	libexpat1 \
 	libexpat1-dev \
+	libevent-2.1-7 \
+	libevent-dev \
 	libhiredis0.14 \ 
 	libhiredis-dev && \
     wget2 "${UNBOUND_SOURCE}" -O unbound.tar.gz && \
@@ -23,6 +27,8 @@ RUN apt-get update && apt-get install -y \
     ./configure \
 	--disable-dependency-tracking \
 	--prefix=/opt/unbound \
+	--with-libevent \
+	--with-pthreads \
 	--enable-cachedb \
 	--with-libhiredis && \
     make && \
