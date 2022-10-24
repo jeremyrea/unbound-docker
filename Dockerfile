@@ -24,7 +24,14 @@ RUN apt-get update && apt-get install -y \
     make && \
     make install && \
     groupadd -r unbound && \
-    useradd -r -g unbound unbound
+    useradd -r -g unbound unbound && \
+    mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
+    mkdir /opt/unbound/etc/unbound/var && \
+    chown unbound:unbound /opt/unbound/etc/unbound/var
+
+COPY run.sh /run.sh 
+
+RUN chmod +x /run.sh 
 
 USER unbound
 
@@ -32,5 +39,5 @@ EXPOSE 53/tcp
 EXPOSE 53/udp
 
 #ENTRYPOINT ["tail", "-f", "/dev/null"]	
-ENTRYPOINT [ "/opt/unbound/sbin/unbound" ]	
+CMD [ "/run.sh" ]	
 
