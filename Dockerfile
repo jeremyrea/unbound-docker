@@ -13,14 +13,18 @@ RUN apt-get update && apt-get install -y \
 	openssl \
 	libssl-dev \
 	libexpat1 \
-	libexpat1-dev && \
+	libexpat1-dev \
+	libhiredis0.14 \ 
+	libhiredis-dev && \
     wget2 "${UNBOUND_SOURCE}" -O unbound.tar.gz && \
     tar xzf unbound.tar.gz && \
     rm unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure \
-        --disable-dependency-tracking \
-    	--prefix=/opt/unbound && \
+	--disable-dependency-tracking \
+	--prefix=/opt/unbound \
+	--enable-cachedb \
+	--with-libhiredis && \
     make && \
     make install && \
     groupadd -r unbound && \
