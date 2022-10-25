@@ -44,7 +44,7 @@ RUN build_packages="\
     mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
     mkdir /opt/unbound/etc/unbound/var && \
     chown unbound:unbound /opt/unbound/etc/unbound/var && \
-    apt-get purge -y --auto-remove --allow-remove-essential ${build_packages} && \
+    apt-get purge -y ${build_packages} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY run.sh /run.sh 
