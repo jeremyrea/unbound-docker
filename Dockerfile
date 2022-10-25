@@ -20,7 +20,7 @@ RUN build_packages="\
 	libevent-dev \
 	libhiredis-dev" && \
     apt-get update && apt-get install -y \
-	${build_packagesi} \
+	${build_packages} \
 	openssl \
 	libc6 \
 	libexpat1 \
