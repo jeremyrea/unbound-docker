@@ -7,23 +7,25 @@ LABEL org.opencontainers.image.licenses=MIT
 ENV UNBOUND_VERSION=1.17.0
 ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
-RUN apt-get update && apt-get install -y \
+RUN build_packages="\
 	wget2 \
 	tar \
 	make \
-        build-essential \
-        bison \
-        flex \
-	openssl \
+	build-essential \
+	bison \
+	flex \
 	libssl-dev \
-	libc6 \
 	libc6-dev \
-	libexpat1 \
 	libexpat1-dev \
-	libevent-2.1-7 \
 	libevent-dev \
-	libhiredis0.14 \ 
-	libhiredis-dev && \
+	libhiredis-dev" && \
+    apt-get update && apt-get install -y \
+	${build_packagesi} \
+	openssl \
+	libc6 \
+	libexpat1 \
+	libevent-2.1-7 \
+	libhiredis0.14 && \
     wget2 "${UNBOUND_SOURCE}" -O unbound.tar.gz && \
     tar xzf unbound.tar.gz && \
     rm unbound.tar.gz && \
@@ -41,7 +43,9 @@ RUN apt-get update && apt-get install -y \
     useradd -r -g unbound unbound && \
     mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
     mkdir /opt/unbound/etc/unbound/var && \
-    chown unbound:unbound /opt/unbound/etc/unbound/var
+    chown unbound:unbound /opt/unbound/etc/unbound/var && \
+    apt-get purge -y --auto-remove ${buid_packages} && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY run.sh /run.sh 
 
