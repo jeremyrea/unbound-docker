@@ -1,5 +1,9 @@
 FROM debian:bullseye-slim
 
+LABEL org.opencontainers.image.source=https://github.com/jeremyrea/unbound-docker
+LABEL org.opencontainers.image.description="Unbound Docker Image"
+LABEL org.opencontainers.image.licenses=MIT
+
 ENV UNBOUND_VERSION=1.17.0
 ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
