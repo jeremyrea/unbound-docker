@@ -13,6 +13,6 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build latest Docker image
       run: |
-        docker build . --file Dockerfile --tag unbound:latest
+        docker build . --file Dockerfile --tag ghcr.io/jeremyrea/unbound:latest
         echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u jeremyrea --password-stdin
         docker push ghcr.io/jeremyrea/unbound:latest
