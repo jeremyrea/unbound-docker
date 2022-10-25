@@ -13,6 +13,7 @@ RUN build_packages="\
 	gcc \
 	bison \
 	flex \
+	openssl \
 	libssl-dev \
 	libc6-dev \
 	libexpat1-dev \
@@ -21,7 +22,6 @@ RUN build_packages="\
     apt-get update && apt-get install -y --no-install-recommends \
 	${build_packages} \
 	ca-certificates \
-	openssl \
 	libc6 \
 	libexpat1 \
 	libevent-2.1-7 \
