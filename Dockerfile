@@ -15,7 +15,7 @@ RUN build_packages="\
 	bison \
 	flex \
 	libssl-dev \
-	libc6-dev
+	libc6-dev \
 	libexpat1-dev \
 	libevent-dev \
 	libhiredis-dev" && \
