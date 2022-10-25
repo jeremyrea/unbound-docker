@@ -50,6 +50,7 @@ RUN build_packages="\
 FROM debian:bullseye-slim
 
 COPY --from=unbound /opt /opt
+COPY run.sh /run.sh
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -59,17 +60,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libhiredis0.14 && \
     groupadd -r unbound && \
     useradd -r -g unbound unbound && \
+    chmod +x /run.sh && \
     apt-get purge --auto-remove -y && \
     rm -rf /var/lib/apt/lists/*
 
-COPY run.sh /run.sh 
-
-RUN chmod +x /run.sh 
-
 USER unbound
 
-EXPOSE 53/tcp
-EXPOSE 53/udp
+EXPOSE 53/tcp \
+       53/udp
 
 LABEL org.opencontainers.image.source=https://github.com/jeremyrea/unbound-docker \
       org.opencontainers.image.description="Unbound Docker Image" \
