@@ -10,12 +10,10 @@ ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERS
 RUN build_packages="\
 	wget2 \
 	tar \
-	make \
 	build-essential \
 	bison \
 	flex \
 	libssl-dev \
-	libc6-dev \
 	libexpat1-dev \
 	libevent-dev \
 	libhiredis-dev" && \
@@ -28,7 +26,7 @@ RUN build_packages="\
 	libhiredis0.14 && \
     wget2 "${UNBOUND_SOURCE}" -O unbound.tar.gz && \
     tar xzf unbound.tar.gz && \
-    rm unbound.tar.gz && \
+    rm -f unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure \
 	--disable-dependency-tracking \
@@ -44,7 +42,7 @@ RUN build_packages="\
     mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
     mkdir /opt/unbound/etc/unbound/var && \
     chown unbound:unbound /opt/unbound/etc/unbound/var && \
-    apt-get purge -y --auto-remove ${buid_packages} && \
+    apt-get purge -y --auto-remove ${build_packages} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY run.sh /run.sh 
