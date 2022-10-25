@@ -9,7 +9,6 @@ ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERS
 
 RUN build_packages="\
 	wget2 \
-	tar \
         make \
 	gcc \
 	bison \
@@ -19,8 +18,9 @@ RUN build_packages="\
 	libexpat1-dev \
 	libevent-dev \
 	libhiredis-dev" && \
-    apt-get update && apt-get install -y \
+    apt-get update && apt-get install -y --no-install-recommends \
 	${build_packages} \
+	ca-certificates \
 	openssl \
 	libc6 \
 	libexpat1 \
@@ -44,7 +44,7 @@ RUN build_packages="\
     mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
     mkdir /opt/unbound/etc/unbound/var && \
     chown unbound:unbound /opt/unbound/etc/unbound/var && \
-    apt-get purge -y --auto-remove ${build_packages} && \
+    apt-get purge --auto-remove -y ${build_packages} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY run.sh /run.sh 
