@@ -11,7 +11,7 @@ RUN build_packages="\
 	wget2 \
 	tar \
         make \
-	build-essential \
+	gcc \
 	bison \
 	flex \
 	libssl-dev \
@@ -44,7 +44,7 @@ RUN build_packages="\
     mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
     mkdir /opt/unbound/etc/unbound/var && \
     chown unbound:unbound /opt/unbound/etc/unbound/var && \
-    apt-get purge -y ${build_packages} && \
+    apt-get purge -y --auto-remove ${build_packages} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY run.sh /run.sh 
