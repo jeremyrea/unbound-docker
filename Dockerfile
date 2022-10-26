@@ -6,34 +6,33 @@ ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERS
 WORKDIR /tmp
 
 RUN build_packages="\
-	wget2 \
-        make \
-	gcc \
-	bison \
-	flex \
-	openssl \
-	libssl-dev \
-	libc6-dev \
-	libexpat1-dev \
-	libevent-dev \
-	libhiredis-dev" && \
+		wget2 \
+		make \
+		gcc \
+		bison \
+		flex \
+		openssl \
+		libssl-dev \
+		libc6-dev \
+		libexpat1-dev \
+		libevent-dev \
+		libhiredis-dev" && \
     apt-get update && apt-get install -y --no-install-recommends \
-	${build_packages} \
-	ca-certificates \
-	libc6 \
-	libexpat1 \
-	libevent-2.1-7 \
-	libhiredis0.14 && \
+		${build_packages} \
+		ca-certificates \
+		libexpat1 \
+		libevent-2.1-7 \
+		libhiredis0.14 && \
     wget2 "${UNBOUND_SOURCE}" -O unbound.tar.gz && \
     tar xzf unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure \
-	--disable-dependency-tracking \
-	--prefix=/opt/unbound \
-	--with-libevent \
-	--with-pthreads \
-	--enable-cachedb \
-	--with-libhiredis && \
+		--disable-dependency-tracking \
+		--prefix=/opt/unbound \
+		--with-libevent \
+		--with-pthreads \
+		--enable-cachedb \
+		--with-libhiredis && \
     make && \
     make install && \
     groupadd -r unbound && \
@@ -43,9 +42,10 @@ RUN build_packages="\
     chown unbound:unbound /opt/unbound/etc/unbound/var && \
     apt-get purge --auto-remove -y ${build_packages} && \
     rm -rf \
-	/var/lib/apt/lists/* \
-	/tmp/*
+		/var/lib/apt/lists/* \
+		/tmp/*
 
+COPY data/unbound.conf /opt/unbound/etc/unbound/unbound.conf
 
 FROM debian:bullseye-slim
 
@@ -53,8 +53,7 @@ COPY --from=unbound /opt /opt
 COPY run.sh /run.sh
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        libc6 \
+		ca-certificates \
         libexpat1 \
         libevent-2.1-7 \
         libhiredis0.14 && \
