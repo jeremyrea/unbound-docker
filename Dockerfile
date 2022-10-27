@@ -72,6 +72,5 @@ LABEL org.opencontainers.image.source=https://github.com/jeremyrea/unbound-docke
       org.opencontainers.image.description="Unbound Docker Image" \
       org.opencontainers.image.licenses=MIT
 
-#ENTRYPOINT ["tail", "-f", "/dev/null"]	
 CMD [ "/run.sh" ]	
 
