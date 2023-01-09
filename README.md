@@ -18,7 +18,7 @@ docker run \
 
 ### With cachedb module enabled
 
-Inside a directory you will mount containing config files, you would add the following file to connect to your Redis instance:
+Add the following configuration file to connect to your Redis instance:
 
 #### **`cachedb.conf`**
 ``` conf
