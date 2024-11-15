@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim as unbound
+FROM debian:bookworm-slim as unbound
 
 ENV UNBOUND_VERSION=1.17.0
 ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
@@ -47,7 +47,7 @@ RUN build_packages="\
 
 COPY data/unbound.conf /opt/unbound/etc/unbound/unbound.conf
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 COPY --from=unbound /opt /opt
 COPY run.sh /run.sh
