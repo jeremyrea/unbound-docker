@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim as unbound
 
-ENV UNBOUND_VERSION=1.17.0
+ENV UNBOUND_VERSION=1.22.0
 ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 WORKDIR /tmp
