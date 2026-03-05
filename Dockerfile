@@ -1,4 +1,4 @@
-FROM debian:trixie-slim as unbound
+FROM debian:trixie-slim AS unbound
 
 ENV UNBOUND_VERSION=1.22.0
 ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
@@ -21,8 +21,8 @@ RUN build_packages="\
 		${build_packages} \
 		ca-certificates \
 		libexpat1 \
-		libevent-2.1-7 \
-		libhiredis0.14 && \
+		libevent-2.1 \
+		libhiredis1.1.0 && \
     wget2 "${UNBOUND_SOURCE}" -O unbound.tar.gz && \
     tar xzf unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
