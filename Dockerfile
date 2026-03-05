@@ -55,8 +55,8 @@ COPY run.sh /run.sh
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates \
         libexpat1 \
-        libevent-2.1-7 \
-        libhiredis0.14 && \
+        libevent-2.1 \
+        libhiredis1.1.0 && \
     groupadd -r unbound && \
     useradd -r -g unbound unbound && \
     chmod +x /run.sh && \
