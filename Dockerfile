@@ -1,6 +1,6 @@
 FROM debian:trixie-slim AS unbound
 
-ENV UNBOUND_VERSION=1.22.0
+ENV UNBOUND_VERSION=1.24.2
 ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 WORKDIR /tmp
