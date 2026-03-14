@@ -29,14 +29,16 @@ RUN curl -fsSL "${UNBOUND_URL}" -o unbound.tar.gz && \
     tar -xzf unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure \
-		--prefix=/opt/unbound \
-		--with-libevent \
-		--with-pthreads \
-		--enable-cachedb \
-		--with-libhiredis && \
+      --prefix=/opt/unbound \
+      --with-libevent \
+      --with-pthreads \
+      --enable-cachedb \
+      --with-libhiredis && \
     make && \
     make install && \
     strip /opt/unbound/sbin/unbound \
+      /opt/unbound/sbin/unbound-anchor \
+      /opt/unbound/sbin/unbound-checkconf \
       /lib64/libssl.so.3 \
       /lib64/libevent-2.1.so.7 \
       /lib64/libexpat.so.1 \
@@ -44,6 +46,17 @@ RUN curl -fsSL "${UNBOUND_URL}" -o unbound.tar.gz && \
       /lib64/libhiredis.so.1.3.0 \
       /lib64/libjitterentropy.so.3 \
       /lib64/libz.so.1 && \
+    rm -rf \
+      /opt/unbound/include \
+      /opt/unbound/share \
+      /opt/unbound/lib/libunbound.a \
+      /opt/unbound/lib/libunbound.la \
+      /opt/unbound/lib/pkgconfig \
+      /opt/unbound/lib/libunbound.so \
+      /opt/unbound/sbin/unbound-host \
+      /opt/unbound/sbin/unbound-control \
+      /opt/unbound/sbin/unbound-control-setup \
+      /tmp/unbound-* && \
     groupadd -r unbound && \
     useradd -r -g unbound unbound && \
     mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
