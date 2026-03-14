@@ -1,33 +1,34 @@
-FROM debian:trixie-slim AS unbound
+FROM registry.suse.com/bci/bci-base:16.0 AS base
 
-ENV UNBOUND_VERSION=1.24.2
-ENV UNBOUND_SOURCE=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
-
-WORKDIR /tmp
-
-RUN build_packages="\
-		wget2 \
+RUN zypper dup -y && zypper install -y \
+    awk \
+		curl \
 		make \
 		gcc \
 		bison \
 		flex \
 		openssl \
-		libssl-dev \
-		libc6-dev \
-		libexpat1-dev \
-		libevent-dev \
-		libhiredis-dev" && \
-    apt-get update && apt-get install -y --no-install-recommends \
-		${build_packages} \
-		ca-certificates \
-		libexpat1 \
-		libevent-2.1 \
-		libhiredis1.1.0 && \
-    wget2 "${UNBOUND_SOURCE}" -O unbound.tar.gz && \
-    tar xzf unbound.tar.gz && \
+    libopenssl-devel \
+		glibc-devel \
+		libexpat-devel \
+		libevent-devel \
+		ca-certificates && \
+    zypper addrepo https://download.opensuse.org/tumbleweed/repo/oss/ tumbleweed && \
+    zypper --gpg-auto-import-keys refresh && \
+    zypper install -y libhiredis1_3_0 hiredis-devel && \
+    zypper removerepo tumbleweed
+
+FROM base AS build
+
+ENV UNBOUND_VERSION=1.24.2
+ENV UNBOUND_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
+
+WORKDIR /tmp
+
+RUN curl -fsSL "${UNBOUND_URL}" -o unbound.tar.gz && \
+    tar -xzf unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure \
-		--disable-dependency-tracking \
 		--prefix=/opt/unbound \
 		--with-libevent \
 		--with-pthreads \
@@ -35,33 +36,35 @@ RUN build_packages="\
 		--with-libhiredis && \
     make && \
     make install && \
+    strip /opt/unbound/sbin/unbound \
+      /lib64/libssl.so.3 \
+      /lib64/libevent-2.1.so.7 \
+      /lib64/libexpat.so.1 \
+      /lib64/libcrypto.so.3 \
+      /lib64/libhiredis.so.1.3.0 \
+      /lib64/libjitterentropy.so.3 \
+      /lib64/libz.so.1 && \
     groupadd -r unbound && \
     useradd -r -g unbound unbound && \
     mkdir /opt/unbound/etc/unbound/unbound.conf.d && \
     mkdir /opt/unbound/etc/unbound/var && \
-    chown unbound:unbound /opt/unbound/etc/unbound/var && \
-    apt-get purge --auto-remove -y ${build_packages} && \
-    rm -rf \
-		/var/lib/apt/lists/* \
-		/tmp/*
+    chown unbound:unbound /opt/unbound/etc/unbound/var
 
 COPY data/unbound.conf /opt/unbound/etc/unbound/unbound.conf
 
-FROM debian:trixie-slim
+FROM registry.suse.com/bci/bci-micro:16.0
 
-COPY --from=unbound /opt /opt
+COPY --from=build /opt /opt
+COPY --from=build /lib64/libssl.so.3 /lib64/
+COPY --from=build /lib64/libevent-2.1.so.7 /lib64/
+COPY --from=build /lib64/libexpat.so.1 /lib64/
+COPY --from=build /lib64/libcrypto.so.3 /lib64/
+COPY --from=build /lib64/libhiredis.so.1.3.0 /lib64/
+COPY --from=build /lib64/libjitterentropy.so.3 /lib64/
+COPY --from=build /lib64/libz.so.1 /lib64/
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/group /etc/group
 COPY run.sh /run.sh
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates \
-        libexpat1 \
-        libevent-2.1 \
-        libhiredis1.1.0 && \
-    groupadd -r unbound && \
-    useradd -r -g unbound unbound && \
-    chmod +x /run.sh && \
-    apt-get purge --auto-remove -y && \
-    rm -rf /var/lib/apt/lists/*
 
 USER unbound
 
