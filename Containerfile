@@ -12,13 +12,17 @@ RUN zypper dup -y && zypper install -y \
 		glibc-devel \
 		libexpat-devel \
 		libevent-devel \
-		ca-certificates && \
-    zypper addrepo https://download.opensuse.org/tumbleweed/repo/oss/ tumbleweed && \
-    zypper --gpg-auto-import-keys refresh && \
-    zypper install -y libhiredis1_3_0 hiredis-devel && \
-    zypper removerepo tumbleweed
+		ca-certificates
+
+FROM base AS build-hiredis
+ENV VER_HIREDIS=1.3.0
+RUN curl -sSL https://github.com/redis/hiredis/archive/refs/tags/v${VER_HIREDIS}.tar.gz | tar xz -C /tmp
+RUN cd /tmp/hiredis-${VER_HIREDIS} && \
+    make && \
+    make PREFIX=/usr/local install
 
 FROM base AS build
+COPY --from=build-hiredis /usr/local /usr/local
 
 ENV UNBOUND_VERSION=1.24.2
 ENV UNBOUND_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
@@ -32,8 +36,8 @@ RUN curl -fsSL "${UNBOUND_URL}" -o unbound.tar.gz && \
       --prefix=/opt/unbound \
       --with-libevent \
       --with-pthreads \
-      --enable-cachedb \
-      --with-libhiredis && \
+      --with-libhiredis \
+      --enable-cachedb && \
     make && \
     make install && \
     strip /opt/unbound/sbin/unbound \
@@ -43,9 +47,9 @@ RUN curl -fsSL "${UNBOUND_URL}" -o unbound.tar.gz && \
       /lib64/libevent-2.1.so.7 \
       /lib64/libexpat.so.1 \
       /lib64/libcrypto.so.3 \
-      /lib64/libhiredis.so.1.3.0 \
       /lib64/libjitterentropy.so.3 \
-      /lib64/libz.so.1 && \
+      /lib64/libz.so.1 \
+      /usr/local/lib/libhiredis.so.1.3.0 && \
     rm -rf \
       /opt/unbound/include \
       /opt/unbound/share \
@@ -72,9 +76,9 @@ COPY --from=build /lib64/libssl.so.3 /lib64/
 COPY --from=build /lib64/libevent-2.1.so.7 /lib64/
 COPY --from=build /lib64/libexpat.so.1 /lib64/
 COPY --from=build /lib64/libcrypto.so.3 /lib64/
-COPY --from=build /lib64/libhiredis.so.1.3.0 /lib64/
 COPY --from=build /lib64/libjitterentropy.so.3 /lib64/
 COPY --from=build /lib64/libz.so.1 /lib64/
+COPY --from=build /usr/local/lib/libhiredis.so.1.3.0 /lib64/
 COPY --from=build /etc/passwd /etc/passwd
 COPY --from=build /etc/group /etc/group
 COPY run.sh /run.sh
