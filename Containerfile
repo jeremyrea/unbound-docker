@@ -5,6 +5,7 @@ RUN zypper dup -y && zypper install -y \
 		curl \
 		make \
 		gcc \
+    gpg \
 		bison \
 		flex \
 		openssl \
@@ -29,7 +30,12 @@ ENV UNBOUND_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION
 
 WORKDIR /tmp
 
-RUN curl -fsSL "${UNBOUND_URL}" -o unbound.tar.gz && \
+RUN curl -fsSL https://nlnetlabs.nl/downloads/keys/releases-g2.asc -o nlnetlabs.certs && \
+    curl -fsSL "${UNBOUND_URL}" -o unbound.tar.gz && \
+    curl -fsSL "${UNBOUND_URL}.asc" -o unbound.tar.gz.asc && \
+    GNUPGHOME="$(mktemp -d)" && \
+    gpg --homedir "$GNUPGHOME" --import nlnetlabs.certs && \
+    gpg --homedir "$GNUPGHOME" --verify unbound.tar.gz.asc unbound.tar.gz && \
     tar -xzf unbound.tar.gz && \
     cd unbound-${UNBOUND_VERSION} && \
     ./configure \
