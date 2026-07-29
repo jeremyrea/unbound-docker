@@ -25,7 +25,7 @@ RUN cd /tmp/hiredis-${VER_HIREDIS} && \
 FROM base AS build
 COPY --from=build-hiredis /usr/local /usr/local
 
-ENV UNBOUND_VERSION=1.25.1
+ENV UNBOUND_VERSION=1.25.2
 ENV UNBOUND_URL=https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz
 
 WORKDIR /tmp
