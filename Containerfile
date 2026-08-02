@@ -13,7 +13,8 @@ RUN zypper dup -y && zypper install -y \
   glibc-devel \
   libexpat-devel \
   libevent-devel \
-  ca-certificates
+  ca-certificates \
+  ldns
 
 FROM base AS build-hiredis
 ENV VER_HIREDIS=1.3.0
@@ -87,6 +88,7 @@ COPY --from=build /lib64/libz.so.1 /lib64/
 COPY --from=build /usr/local/lib/libhiredis.so.1.3.0 /lib64/
 COPY --from=build /etc/passwd /etc/passwd
 COPY --from=build /etc/group /etc/group
+COPY --from=build /usr/bin/drill /usr/bin/drill
 COPY run.sh /run.sh
 
 USER unbound
