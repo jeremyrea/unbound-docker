@@ -88,7 +88,11 @@ COPY --from=build /lib64/libz.so.1 /lib64/
 COPY --from=build /usr/local/lib/libhiredis.so.1.3.0 /lib64/
 COPY --from=build /etc/passwd /etc/passwd
 COPY --from=build /etc/group /etc/group
+# For healthcheck only
 COPY --from=build /usr/bin/drill /usr/bin/drill
+COPY --from=build /lib64/libldns.so.3 /lib64/
+COPY --from=build /lib64/libc.so.6 /lib64/
+COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/
 COPY run.sh /run.sh
 
 USER unbound
