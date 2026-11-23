@@ -1,4 +1,4 @@
-FROM registry.suse.com/bci/bci-base:16.0 AS base
+FROM registry.suse.com/bci/bci-base:16.1 AS base
 
 RUN zypper dup -y && zypper install -y \
   awk \
@@ -76,7 +76,7 @@ RUN curl -fsSL https://nlnetlabs.nl/downloads/keys/releases-g2.asc -o nlnetlabs.
 
 COPY data/unbound.conf /opt/unbound/etc/unbound/unbound.conf
 
-FROM registry.suse.com/bci/bci-micro:16.0
+FROM registry.suse.com/bci/bci-micro:16.1
 
 COPY --from=build /opt /opt
 COPY --from=build /lib64/libssl.so.3 /lib64/
